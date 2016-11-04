@@ -24,7 +24,17 @@ For those that want to use Coffeescript, [Hubots own documentation](https://hubo
 | @botanic run fish | TODO | Calling shell commands |
 | @botanic short \<url\> | TODO | Integrating with 3rd party APIs |
 
-## Using other chat clients than Slack
+## Deploy
+
+1. In Slack, go to ```Apps & Integration```
+2. Search and select ```Hubot```
+3. Fill in the fields, and note down the API key
+4. Set the environment variable ```export HUBOT_SLACK_TOKEN=your-slack-token```
+5. Run with ```bin/hubot -a slack```
+
+If you deploy to Heroku, do step 4: adding environment variable via the [Heroku dashboard](https://dashboard.heroku.com/apps), under your Application -> ```Settings``` -> ```Config Variables```
+
+### Using other chat clients than Slack
 
 TODO
 
