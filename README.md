@@ -1,5 +1,7 @@
 # botanist
 
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
 botanist is a chat bot built on the [Hubot](https://hubot.github.com/) framework,
 that demonstrates common features of hubot, using JavaScript. Its purpose is to
 kickstart developers who wish to start using Hubot, but wish to use JavaScript

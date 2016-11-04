@@ -1,0 +1,7 @@
+{
+  "name": "Botanist - Hubot with Javascript examples",
+  "description": "A simple Hubot bot showing traditional usages in JavaScript",
+  "repository": "https://github.com/tomfa/botanist",
+  "logo": "https://node-js-sample.herokuapp.com/node.png",
+  "keywords": ["node", "express", "es2015", "es6", "slack", "hubot"]
+}
