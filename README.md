@@ -12,13 +12,15 @@ For those that want to use Coffeescript, [Hubots own documentation](https://hubo
 
 ## Examples
 
-1. Listening with ```hear```
-2. Responding with ```respond```
-3. Responding with formatting
-4. Responding with buttons/actions
-5. Using a 3rd party hubot script
-6. Calling shell commands
-7. Integrating with 3rd party APIs
+| trigger word | file | description |
+| ------------ | ---- | ----------- |
+| anyone | [scripts/hearexample.js](https://github.com/tomfa/botanist/blob/master/scripts/hearexample.js) | Listening with ```hear``` |
+| @botanic hello | [scripts/respondexample.js](https://github.com/tomfa/botanist/blob/master/scripts/respondexample.js) | Responding with ```respond``` |
+| @botanic fancyhello | [scripts/fancyrespondexample.js](https://github.com/tomfa/botanist/blob/master/scripts/fancyrespondexample.js) | Responding with formatting |
+| @botanic register | TODO | Responding with buttons/actions |
+| @botanic weather | TODO | Using a 3rd party hubot script |
+| @botanic run fish | TODO | Calling shell commands |
+| @botanic short \<url\> | TODO | Integrating with 3rd party APIs |
 
 ## Using other chat clients than Slack
 
