@@ -16,13 +16,15 @@ For those that want to use Coffeescript, [Hubots own documentation](https://hubo
 
 | trigger word | file | description |
 | ------------ | ---- | ----------- |
-| anyone | [scripts/hearexample.js](https://github.com/tomfa/botanist/blob/master/scripts/hearexample.js) | Listening with ```hear``` |
-| @botanic hello | [scripts/respondexample.js](https://github.com/tomfa/botanist/blob/master/scripts/respondexample.js) | Responding with ```respond``` |
-| @botanic fancyhello | [scripts/fancyrespondexample.js](https://github.com/tomfa/botanist/blob/master/scripts/fancyrespondexample.js) | Responding with formatting |
-| @botanic register | TODO | Responding with buttons/actions |
-| @botanic weather | TODO | Using a 3rd party hubot script |
-| @botanic run fish | TODO | Calling shell commands |
-| @botanic short \<url\> | TODO | Integrating with 3rd party APIs |
+| anyone | [scripts/hearexample.js](https://github.com/tomfa/botanist/blob/master/scripts/hearexample.js) | How to eavesdrop to a channel and say something, using ```hear``` |
+| @botanic hello | [scripts/respondexample.js](https://github.com/tomfa/botanist/blob/master/scripts/respondexample.js) | How to respond to a mention, using ```respond``` |
+| @botanic help hello | [scripts/respondexample.js](https://github.com/tomfa/botanist/blob/master/scripts/respondexample.js) | How to document your bot functions |
+| @botanic fancyhello | [scripts/fancyrespondexample.js](https://github.com/tomfa/botanist/blob/master/scripts/fancyrespondexample.js) | How to respond with rich formatting |
+| @botanic register | TODO | How to respond with buttons/actions |
+| @botanic weather | TODO | How to use a 3rd party hubot script |
+| @botanic run fish | TODO | How to call shell commands |
+| @botanic short \<url\> | TODO | How to integrate with 3rd party HTTP APIs |
+| N/A | TODO | How to program bot with ES2015 |
 
 ## Deploy
 
