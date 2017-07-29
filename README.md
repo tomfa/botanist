@@ -23,6 +23,7 @@ For those that want to use Coffeescript, [Hubots own documentation](https://hubo
 | @botanic weather | TODO | How to use a 3rd party hubot script |
 | @botanic run fish | TODO | How to call shell commands |
 | @botanic short \<url\> | TODO | How to integrate with 3rd party HTTP APIs |
+| @botanic have a soda | [scripts/es6example.js](https://github.com/tomfa/botanist/blob/master/scripts/variablesexample.js) | How to store and retrieve variables |
 | @botanic es6 | [scripts/es6example.js](https://github.com/tomfa/botanist/blob/master/scripts/es6example.js) | Hubot runs on Node, and will therefore support ES2015 |
 
 ## Deploy
@@ -33,7 +34,15 @@ For those that want to use Coffeescript, [Hubots own documentation](https://hubo
 4. Set the environment variable ```export HUBOT_SLACK_TOKEN=your-slack-token```
 5. Run with ```bin/hubot -a slack```
 
-If you deploy to Heroku, do step 4: adding environment variable via the [Heroku dashboard](https://dashboard.heroku.com/apps), under your Application -> ```Settings``` -> ```Config Variables```
+### Deploying to Heroku
+If you have [Heroku toolbelt](https://devcenter.heroku.com/articles/heroku-cli), you can deploy the bot with the commands below
+```
+heroku create
+heroku config:set HUBOT_HEROKU_KEEPALIVE_URL=$(heroku apps:info -s | grep web.url | cut -d= -f2)
+heroku config:set HUBOT_SLACK_TOKEN=your-slack-token
+```
+
+*(Remember to swap out "your-slack-token" with your actual one)*
 
 ### Using other chat clients than Slack
 
