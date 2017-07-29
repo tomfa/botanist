@@ -2,7 +2,7 @@
 //   A simple testscript demonstrating code written with es2015
 //
 // Commands:
-//   es6 - sends a response written i ES6
+//   hubot es6 - sends a response written i ES6
 
 module.exports = robot => {
 	robot.respond(/es6/ , res => {
