@@ -5,6 +5,7 @@
   "author": "Tomas Fagerbekk <tomas@webutvikling.org>",
   "description": "An example bot with dummy endpoints",
   "dependencies": {
+    "cron": "^1.2.1",
     "hubot": "^2.19.0",
     "hubot-diagnostics": "0.0.1",
     "hubot-google-images": "^0.2.6",
