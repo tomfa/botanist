@@ -1,8 +1,8 @@
 // Description:
-//   A simple testscript demonstrating "hear" function
+//   A simple testscript demonstrating advanced message formatting
 //
 // Commands:
-//   hubot hello - will say hi back in one way or another
+//   hubot fancyhello - shows example of a fancy message formatting
 
 
 module.exports = function (robot) {

@@ -1,5 +1,5 @@
 // Description:
-//   A simple testscript demonstrating "hear" function
+//   A simple testscript demonstrating "respond" function
 //
 // Commands:
 //   hubot hello - will say hi back in one way or another
