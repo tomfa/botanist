@@ -38,11 +38,24 @@ For those that want to use Coffeescript, [Hubots own documentation](https://hubo
 If you have [Heroku toolbelt](https://devcenter.heroku.com/articles/heroku-cli), you can deploy the bot with the commands below
 ```
 heroku create
-heroku config:set HUBOT_HEROKU_KEEPALIVE_URL=$(heroku apps:info -s | grep web.url | cut -d= -f2)
 heroku config:set HUBOT_SLACK_TOKEN=your-slack-token
+git push heroku master
 ```
 
 *(Remember to swap out "your-slack-token" with your actual one)*
+
+### Keeping the bot alive on Heroku
+With the commands below, you'll also make sure your bot is awake between 6am and 22pm, using [hubot-heroku-keepalive](https://github.com/hubot-scripts/hubot-heroku-keepalive).
+
+```
+heroku config:set HUBOT_HEROKU_KEEPALIVE_URL=$(heroku apps:info -s | grep web.url | cut -d= -f2)
+heroku config:add TZ="Europe/Oslo"
+heroku addons:create scheduler:standard
+heroku addons:open scheduler
+```
+
+In the config page for scheduler, add job with command `curl ${HUBOT_HEROKU_KEEPALIVE_URL}heroku/keepalive` and run it at 5am UTC (no earlier than [hubot-heroku-keepalive](https://github.com/hubot-scripts/hubot-heroku-keepalive) is configured to begin)
+
 
 ### Using other chat clients than Slack
 
