@@ -4,6 +4,7 @@
 // Commands:
 //   hubot fancyhello - shows example of a fancy message formatting
 
+var request = require('request');
 
 module.exports = function (robot) {
 
@@ -11,9 +12,22 @@ module.exports = function (robot) {
   // 2: De-register listen to repo
   // 3. Get pull-request status
   // curl -i -H 'Authorization: token your-token' \
-  // https://api.github.com/repos/otovo/cloud/pulls
+  // https://api.github.com
 
-	robot.respond(/github/, function(res){
+  const getPullRequests = (token, callback) => {
+    var options = {
+      url: 'https://api.github.com/repos/otovo/cloud/pulls',
+      headers: {
+        'Authorization': `token ${token}`,
+        'User-Agent': 'PyGithub/Python'
+      }
+    };
+    request(options, callback);
+  };
+
+  let returnvalue = null;
+
+	robot.respond(/github pulls/, function(res){
     const token = process.env.GITHUB_TOKEN;
     if (!token) {
       res.send({
@@ -26,6 +40,32 @@ module.exports = function (robot) {
           }
         ]
       });
+    }
+    else {
+      const callback = (error, response, body) => {
+        if (!error && response.statusCode == 200) {
+          data = JSON.parse(body);
+          const attachments = data.map(d => ({
+            "title": d.title,
+            "title_link": d.url,
+            "fields": [
+              {
+                "title": "Created at",
+                "value": d.created_at,
+                "short": true
+              }
+            ]
+          }));
+          if (attachments.length()) {
+            res.send({
+              "attachments": attachments
+            });
+          } else {
+            res.reply('No unmerged Pull requests :)');
+          }
+        }
+      };
+      getPullRequests(token, callback)
     }
 	})
 };
