@@ -4,6 +4,9 @@
 //
 // Commands:
 //   hubot have a soda - will accept, given it hasn't had enough already
+//
+// Note that on Heroku free dynos, redis is non-persistent, which means
+// all your  'brain' is reset when a dyno is restarted/deployed to
 
 const cron = require('cron');
 
