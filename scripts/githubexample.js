@@ -4,7 +4,92 @@
 // Commands:
 //   hubot fancyhello - shows example of a fancy message formatting
 
-var request = require('request');
+const moment = require('moment');
+const fetch = require('node-fetch');
+
+const color = date => {
+  const DAY = 1000 * 60 * 60 * 24;
+  const diff = date - Date.now();
+  if (diff < DAY) {
+    return 'success';
+  }
+  if (diff < 2 * DAY) {
+    return 'warning';
+  }
+  return 'danger';
+};
+
+const getPullRequests = (token, repo) => (
+  fetch(
+    `https://api.github.com/repos/${repo}/pulls`,
+    { headers: {
+      'Authorization': `token ${token}`,
+      'User-Agent': 'PyGithub/Python'
+    }}
+  ).then(response => {
+      return response
+        .json()
+        .then(json => ({json, status: response.status}))
+        .catch(() => ({json: null, status: response.status}));
+    })
+);
+
+const sendMissingToken = res => {
+  res.send({
+    "attachments": [
+      {
+        "fallback": "GITHUB_TOKEN var not set",
+        "color": "danger",
+        "title": "Missing Github token",
+        "text": "Token not set. Set with heroku config:set GITHUB_TOKEN=your-github-token. The token can be found at https://github.com/settings/tokens",
+      }
+    ]
+  });
+};
+
+const handlePullRequestResponse = res => ({ json, status }) => {
+  if (status == 200) {
+    const attachments = json.map(d => ({
+      "title": d.title,
+      "title_link": d.url,
+      "color": color(d.updated_at),
+      "fields": [
+        //{
+        //  "title": "Created at",
+        //  "value": moment(d.created_at).fromNow(),
+        //  "short": true,
+        //},
+        {
+          "title": "Updated at",
+          "value": moment(d.updated_at).fromNow(),
+          "short": true,
+        },
+        //{
+        //  "title": "By",
+        //  "value": d.user.login,
+        //  "short": true,
+        //},
+        {
+          "title": "Assignee",
+          "value": d.assignee && d.assignee.login || 'None',
+          "short": true,
+        }
+      ]
+    }));
+    if (!attachments.length) {
+      return res.send({
+        attachments: {
+          "title": "No unmerged PRs!",
+          "color": "success"
+        }
+      });
+    }
+    res.send(`Looks like you've got some work to do`)
+    res.send({
+      "attachments": attachments
+    });
+  }
+};
 
 module.exports = function (robot) {
 
@@ -14,58 +99,11 @@ module.exports = function (robot) {
   // curl -i -H 'Authorization: token your-token' \
   // https://api.github.com
 
-  const getPullRequests = (token, callback) => {
-    var options = {
-      url: 'https://api.github.com/repos/otovo/cloud/pulls',
-      headers: {
-        'Authorization': `token ${token}`,
-        'User-Agent': 'PyGithub/Python'
-      }
-    };
-    request(options, callback);
-  };
-
-  let returnvalue = null;
-
 	robot.respond(/github pulls/, function(res){
     const token = process.env.GITHUB_TOKEN;
     if (!token) {
-      res.send({
-        "attachments": [
-          {
-            "fallback": "GITHUB_TOKEN var not set",
-            "color": "danger",
-            "title": "Missing Github token",
-            "text": "Token not set. Set with heroku config:set GITHUB=your-github-token. The token can be found at https://github.com/settings/tokens",
-          }
-        ]
-      });
+        return sendMissingToken(res);
     }
-    else {
-      const callback = (error, response, body) => {
-        if (!error && response.statusCode == 200) {
-          data = JSON.parse(body);
-          const attachments = data.map(d => ({
-            "title": d.title,
-            "title_link": d.url,
-            "fields": [
-              {
-                "title": "Created at",
-                "value": d.created_at,
-                "short": true
-              }
-            ]
-          }));
-          if (attachments.length()) {
-            res.send({
-              "attachments": attachments
-            });
-          } else {
-            res.reply('No unmerged Pull requests :)');
-          }
-        }
-      };
-      getPullRequests(token, callback)
-    }
+    getPullRequests(token, "otovo/cloud").then(handlePullRequestResponse(res));
 	})
 };
