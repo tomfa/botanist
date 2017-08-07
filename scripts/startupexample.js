@@ -13,7 +13,7 @@ module.exports = robot => {
     "attachments": [
       {
         "fallback": "Hubot deployed",
-        "color": "success",
+        "color": "#36a64f",
         "title": startupMessages[Math.floor((Math.random()*startupMessages.length))],
         "footer": "I was deployed without crashing"
       }

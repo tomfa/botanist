@@ -9,11 +9,11 @@ const fetch = require('node-fetch');
 
 const color = date => {
   const DAY = 1000 * 60 * 60 * 24;
-  const diff = date - Date.now();
+  const diff = Date.now() - date;
   if (diff < DAY) {
-    return 'success';
+    return '#36a64f';
   }
-  if (diff < 2 * DAY) {
+  if (diff < (2 * DAY)) {
     return 'warning';
   }
   return 'danger';
@@ -57,7 +57,7 @@ const handlePullRequestResponse = (res, repo) => ({ json, status }) => {
       return res.send({
         attachments: {
           "title": `No unmerged PRs for ${repo}!`,
-          "color": "success"
+          "color": "#36a64f"
         }
       });
     }
