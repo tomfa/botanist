@@ -38,7 +38,7 @@ const handlePullRequestResponse = (res, repo) => ({ json, status }) => {
   if (status == 200) {
     const attachments = json.map(d => ({
       "title": d.title,
-      "title_link": d.url,
+      "title_link": d.html_url,
       "color": color(d.updated_at),
       "fields": [
         {
