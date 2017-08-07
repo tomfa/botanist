@@ -24,6 +24,7 @@ For those that want to use Coffeescript, [Hubots own documentation](https://hubo
 | @botanic es6 | [scripts/es6example.js](https://github.com/tomfa/botanist/blob/master/scripts/es6example.js) | Hubot runs on Node, and will therefore support ES2015 |
 | @botanist github pulls | [scripts/githubexample.js](https://github.com/tomfa/botanist/blob/master/scripts/githubexample.js) | Github integration example |
 | @botanist trello status | [scripts/trelloexample.js](https://github.com/tomfa/botanist/blob/master/scripts/trelloexample.js) | Trello integration example |
+| N/A | [scripts/startupexample.js](https://github.com/tomfa/botanist/blob/master/scripts/startupexample.js) | Message sent on startup |
 
 
 ## Deploy
