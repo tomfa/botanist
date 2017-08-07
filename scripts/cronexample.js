@@ -14,10 +14,10 @@ module.exports = function (robot) {
     robot.messageRoom('general', 'cron job example');
   };
 
-  new cron.CronJob({
-    cronTime: pattern,
-    onTick: runFn,
-    start: true,
-    timeZone: timezone
-  });
+  // new cron.CronJob({
+  //   cronTime: pattern,
+  //   onTick: runFn,
+  //   start: true,
+  //   timeZone: timezone
+  // });
 };
