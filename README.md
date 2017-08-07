@@ -20,11 +20,11 @@ For those that want to use Coffeescript, [Hubots own documentation](https://hubo
 | @botanic hello | [scripts/respondexample.js](https://github.com/tomfa/botanist/blob/master/scripts/respondexample.js) | How to respond to a mention, using ```respond``` |
 | @botanic help hello | [scripts/respondexample.js](https://github.com/tomfa/botanist/blob/master/scripts/respondexample.js) | How to document your bot functions |
 | @botanic fancyhello | [scripts/fancyrespondexample.js](https://github.com/tomfa/botanist/blob/master/scripts/fancyrespondexample.js) | How to respond with rich formatting |
-| @botanic weather | TODO | How to use a 3rd party hubot script |
-| @botanic run fish | TODO | How to call shell commands |
-| @botanic short \<url\> | TODO | How to integrate with 3rd party HTTP APIs |
-| @botanic have a soda | [scripts/es6example.js](https://github.com/tomfa/botanist/blob/master/scripts/variablesexample.js) | How to store and retrieve variables |
+| @botanic have a soda | [scripts/variablesexample.js](https://github.com/tomfa/botanist/blob/master/scripts/variablesexample.js) | How to store and retrieve variables |
 | @botanic es6 | [scripts/es6example.js](https://github.com/tomfa/botanist/blob/master/scripts/es6example.js) | Hubot runs on Node, and will therefore support ES2015 |
+| @botanist github pulls | [scripts/githubexample.js](https://github.com/tomfa/botanist/blob/master/scripts/githubexample.js) | Github integration example |
+| @botanist trello status | [scripts/trelloexample.js](https://github.com/tomfa/botanist/blob/master/scripts/trelloexample.js) | Trello integration example |
+
 
 ## Deploy
 
@@ -55,9 +55,3 @@ heroku addons:open scheduler
 ```
 
 In the config page for scheduler, add job with command `curl ${HUBOT_HEROKU_KEEPALIVE_URL}heroku/keepalive` and run it at 5am UTC (no earlier than [hubot-heroku-keepalive](https://github.com/hubot-scripts/hubot-heroku-keepalive) is configured to begin)
-
-
-### Using other chat clients than Slack
-
-TODO
-

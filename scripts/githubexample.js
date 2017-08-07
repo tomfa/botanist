@@ -2,7 +2,7 @@
 //   A simple testscript demonstrating advanced message formatting
 //
 // Commands:
-//   hubot fancyhello - shows example of a fancy message formatting
+//   hubot github pulls - shows unmerged PRs
 
 const moment = require('moment');
 const fetch = require('node-fetch');
@@ -34,41 +34,18 @@ const getPullRequests = (token, repo) => (
     })
 );
 
-const sendMissingToken = res => {
-  res.send({
-    "attachments": [
-      {
-        "fallback": "GITHUB_TOKEN var not set",
-        "color": "danger",
-        "title": "Missing Github token",
-        "text": "Token not set. Set with heroku config:set GITHUB_TOKEN=your-github-token. The token can be found at https://github.com/settings/tokens",
-      }
-    ]
-  });
-};
-
-const handlePullRequestResponse = res => ({ json, status }) => {
+const handlePullRequestResponse = (res, repo) => ({ json, status }) => {
   if (status == 200) {
     const attachments = json.map(d => ({
       "title": d.title,
       "title_link": d.url,
       "color": color(d.updated_at),
       "fields": [
-        //{
-        //  "title": "Created at",
-        //  "value": moment(d.created_at).fromNow(),
-        //  "short": true,
-        //},
         {
           "title": "Updated at",
           "value": moment(d.updated_at).fromNow(),
           "short": true,
         },
-        //{
-        //  "title": "By",
-        //  "value": d.user.login,
-        //  "short": true,
-        //},
         {
           "title": "Assignee",
           "value": d.assignee && d.assignee.login || 'None',
@@ -79,12 +56,12 @@ const handlePullRequestResponse = res => ({ json, status }) => {
     if (!attachments.length) {
       return res.send({
         attachments: {
-          "title": "No unmerged PRs!",
+          "title": `No unmerged PRs for ${repo}!`,
           "color": "success"
         }
       });
     }
-    res.send(`Looks like you've got some work to do`)
+    res.send(`PRs for ${repo}:`);
     res.send({
       "attachments": attachments
     });
@@ -92,18 +69,19 @@ const handlePullRequestResponse = res => ({ json, status }) => {
 };
 
 module.exports = function (robot) {
-
-  // 1: Register listen to repo
-  // 2: De-register listen to repo
-  // 3. Get pull-request status
-  // curl -i -H 'Authorization: token your-token' \
-  // https://api.github.com
-
 	robot.respond(/github pulls/, function(res){
-    const token = process.env.GITHUB_TOKEN;
+    const token = robot.getVariable('GITHUB_TOKEN');
     if (!token) {
-        return sendMissingToken(res);
+        return robot.complainAboutMissingVariable(res, 'GITHUB_TOKEN', 'your-github-token', 'The token can be found at https://github.com/settings/tokens');
     }
-    getPullRequests(token, "otovo/cloud").then(handlePullRequestResponse(res));
+    const repos = robot.getVariable('GITHUB_REPOS');
+    if (!repos) {
+      return robot.complainAboutMissingVariable(res, 'GITHUB_REPOS', 'tomfa/botanist; tomfa/terraform-sandbox');
+    }
+    const reposArray = repos.split(';');
+    reposArray.forEach(repo => {
+      repo = repo.trim();
+      getPullRequests(token, repo).then(handlePullRequestResponse(res, repo));
+    });
 	})
 };

@@ -33,61 +33,25 @@ const getLists = (boardId, applicationKey, token) => {
     .catch(logError);
 };
 
-const sendMissingBoardId = res => {
-  res.send({
-    "attachments": [
-      {
-        "fallback": `TRELLO_BOARD_ID var not set`,
-        "color": "danger",
-        "title": `Missing TRELLO_BOARD_ID`,
-        "text": `TRELLO_BOARD_ID not set. Set with heroku config:set
-                 TRELLO_BOARD_ID=your-TRELLO_BOARD_ID. The board id
-                 can be found at by adding /reports.json to your shorturl,
-                 e.g. https://trello.com/b/3XtA4yi2/reports.json`
-      }
-    ]
-  });
-};
-
-const sendMissingToken = res => {
-  res.send({
-    "attachments": [
-      {
-        "fallback": "TRELLO_TOKEN var not set",
-        "color": "danger",
-        "title": "Missing Github token",
-        "text": "Token not set. Set with heroku config:set TRELLO_TOKEN=your-trello-token. The token can be generated from https://trello.com/app-key",
-      }
-    ]
-  });
-};
-
-const sendMissingApplicationKey = res => {
-  res.send({
-    "attachments": [
-      {
-        "fallback": "TRELLO_APPLICATION_KEY var not set",
-        "color": "danger",
-        "title": "Missing Trello key",
-        "text": "Token not set. Set with heroku config:set TRELLO_APPLICATION_KEY=your-applicationKey. The key can be found at https://trello.com/app-key",
-      }
-    ]
-  });
-};
-
 function hubotFunctions(robot) {
   robot.respond(/trello status/, function(res){
-    const token = process.env.TRELLO_TOKEN;
+    const token = robot.getVariable('TRELLO_TOKEN');
     if (!token) {
-      return sendMissingToken(res);
+      return robot.complainAboutMissingVariable(
+        res, 'TRELLO_TOKEN', 'your-trello-token', 'The token can be generated from https://trello.com/app-key');
     }
-    const applicationKey = process.env.TRELLO_APPLICATION_KEY;
+    const applicationKey = robot.getVariable('TRELLO_APPLICATION_KEY');
     if (!applicationKey) {
-      return sendMissingApplicationKey(res);
+      return robot.complainAboutMissingVariable(
+        res, 'TRELLO_APPLICATION_KEY', 'your-trello_application_key', 'The key can be found at https://trello.com/app-key')
     }
-    const boardId = process.env.TRELLO_BOARD_ID;
+    const boardId = robot.getVariable('TRELLO_BOARD_ID');
     if (!boardId) {
-      return sendMissingBoardId(res);
+      return robot.complainAboutMissingVariable(
+        res, 'TRELLO_BOARD_ID', 'your-trello_board_id',
+        `The board id
+         can be found at by adding /reports.json to your shorturl,
+         e.g. https://trello.com/b/3XtA4yi2/reports.json`)
     }
 
     let lists = {};
