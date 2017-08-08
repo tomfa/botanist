@@ -6,7 +6,7 @@
 module.exports = robot => {
   let room = process.env.HOME_CHANNEL;
   if (!room) {
-    room = '#dev-bots';
+    room = '#general';
   }
   const startupMessages = ['Good day, sir!', 'Someone rebooted me! How rude!', 'Oh.. where am I?', 'Work work'];
   robot.messageRoom(room, {
