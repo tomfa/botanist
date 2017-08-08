@@ -45,8 +45,8 @@ git push heroku master
 
 *(Remember to swap out "your-slack-token" with your actual one)*
 
-### Keeping the bot alive on Heroku
-With the commands below, you'll also make sure your bot is awake between 6am and 22pm, using [hubot-heroku-keepalive](https://github.com/hubot-scripts/hubot-heroku-keepalive).
+### Keeping the bot alive on Heroku (Free dyno only)
+Heroku Free tier will hibernate after 30 minutes. The bot will then not be reachable. With the commands below, you'll also make sure your bot is awake between 6am and 22pm, using [hubot-heroku-keepalive](https://github.com/hubot-scripts/hubot-heroku-keepalive).
 
 ```
 heroku config:set HUBOT_HEROKU_KEEPALIVE_URL=$(heroku apps:info -s | grep web.url | cut -d= -f2)
@@ -56,3 +56,10 @@ heroku addons:open scheduler
 ```
 
 In the config page for scheduler, add job with command `curl ${HUBOT_HEROKU_KEEPALIVE_URL}heroku/keepalive` and run it at 5am UTC (no earlier than [hubot-heroku-keepalive](https://github.com/hubot-scripts/hubot-heroku-keepalive) is configured to begin)
+
+### Persistent hubot brain (Free dyno only)
+Hubot will by default use redis as its storage space. Heroku Free dynos will wipe Redis on reboot. This means that all variables stored in Redis is gone after deploys/reboots of the dyno. To prevent this, you'll either need to upgrade to Hobby, or use another backend than Redis for Hubot brain.
+
+Alternatives are:
+- [hubot-postgres-brain](https://www.npmjs.com/package/hubot-postgres-brain)
+- [hubot-s3-brain](https://github.com/dylanmei/hubot-s3-brain)
