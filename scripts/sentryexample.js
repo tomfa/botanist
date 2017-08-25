@@ -5,30 +5,48 @@
 //   hubot sentry status - shows updates on sentry the last 24h
 
 const fetch = require('node-fetch');
+const cron = require('cron');
 
 const baseUrl = 'https://sentry.io';
 
-const getIssues = (organizationSlug, projectSlug, token) => (
-  fetch(
-    `${baseUrl}/api/0/projects/${organizationSlug}/${projectSlug}/issues/`,
+async function getIssues(organizationSlug, projectSlug, token) {
+  const url = `${baseUrl}/api/0/projects/${organizationSlug}/${projectSlug}/issues/`;
+  return await getShit(url, token);
+}
+
+async function getShit(url, token) {
+   const response = await fetch(
+    url,
     { headers: {
       'Authorization': `Bearer ${token}`
     }}
-  ).then(response => {
-      console.log('url')
-      console.log(`${baseUrl}'/api/0/projects/${organizationSlug}/${projectSlug}/issues/`)
-      console.log('Authorization')
-      console.log(`Bearer ${token}`)
-      return response
-        .json()
-        .then(json => ({json, status: response.status}))
-        .catch(() => ({json: null, status: response.status}));
-    })
-);
+  );
 
-const handleIssuesResponse = (res, organization, project) => ({ json, status }) => {
-  console.log(status)
-  console.log('status')
+  let json = await response.json();
+  const link = response.headers.get('link');
+  const results = link.split(';')[5] === ' results="true"';
+  const nextURL = link.substring(link.lastIndexOf("<")+1,link.lastIndexOf(">"));
+
+  if (results) {
+    const nextShit = await getShit(nextURL, token);
+    json = json.concat(nextShit.json);
+  }
+
+  return { json, status: response.status };
+
+}
+
+const color = count => {
+  if (count < 50) {
+    return '#36a64f';
+  }
+  if (count < 100) {
+    return 'warning';
+  }
+  return 'danger';
+};
+
+const handleIssuesResponse = (organization, project, { json, status }) => {
   if (status == 200) {
     let todayNew = 0;
     let todayTotal = 0;
@@ -55,9 +73,10 @@ const handleIssuesResponse = (res, organization, project) => ({ json, status }) 
       todayTotal += numEventsLastDay;
     });
 
-    return res.send({
+    return ({
       attachments: [
         {
+          color: color(todayTotal),
           "title": `${todayTotal} events last 24h for ${project}`,
           "title_link": `https://sentry.io/${organization}/${project}/`,
           "fields": [
@@ -74,7 +93,8 @@ const handleIssuesResponse = (res, organization, project) => ({ json, status }) 
           ]
         },
         {
-          "title": `Winner: ${maxErrorIssue.id}`,
+          color: color(maxErrorIssue.lastDayIssuesNum),
+          "title": `Winner: "${maxErrorIssue.title.substr(0,50)}"`,
           "title_link": maxErrorIssue.permalink,
           "fields": [
             {
@@ -86,7 +106,17 @@ const handleIssuesResponse = (res, organization, project) => ({ json, status }) 
               "title": "Assignee",
               "value": maxErrorIssue.assignedTo,
               "short": true
-            }
+            },
+            {
+              "title": "Culprit",
+              "value": maxErrorIssue.culprit,
+              "short": true
+            },
+            {
+              "title": "First seen",
+              "value": maxErrorIssue.firstSeen,
+              "short": true
+            },
           ]
         }
       ]
@@ -94,7 +124,36 @@ const handleIssuesResponse = (res, organization, project) => ({ json, status }) 
   }
 };
 
+function reportSentryStatus(robot, chatRoom, greeting) {
+  const token = robot.getVariable('SENTRY_TOKEN');
+  const organization = robot.getVariable('SENTRY_ORGANIZATION');
+  const projects = robot.getVariable('SENTRY_PROJECTS');
+  if (!token || !organization || !projects) {
+    console.log('Missing sentry variables. Cron will not run');
+    return;
+  }
+  const projectArray = projects.split(';');
+  if (greeting) {
+    robot.messageRoom(chatRoom, greeting);
+  }
+
+  projectArray.forEach(project => {
+    project = project.trim();
+    getIssues(organization, project, token).then(data => {
+      const message = handleIssuesResponse(organization, project, data);
+      robot.messageRoom(chatRoom, message);  
+    })  
+  });
+}
+
 module.exports = function (robot) {
+  new cron.CronJob({
+    cronTime: '0 0 9 * * *',
+    onTick: () => reportSentryStatus(robot, 'dev', `Just because you are a developer doesn’t mean don't have bugs:`),
+    start: true,
+    timeZone: 'Europe/Oslo',
+  });
+
 	robot.respond(/sentry status/, function(res){
     const token = robot.getVariable('SENTRY_TOKEN');
     if (!token) {
@@ -108,10 +167,6 @@ module.exports = function (robot) {
     if (!projects) {
       return robot.complainAboutMissingVariable(res, 'SENTRY_PROJECTS', 'web;backend');
     }
-    const projectArray = projects.split(';');
-    projectArray.forEach(project => {
-      project = project.trim();
-      getIssues(organization, project, token).then(handleIssuesResponse(res, organization, project));
-    });
+    reportSentryStatus(robot, res.message.room)
 	})
 };
