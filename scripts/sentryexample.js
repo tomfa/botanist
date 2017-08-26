@@ -244,13 +244,13 @@ const handleIssuesResponse = (organization, project, { json, status }) => {
           "title_link": maxErrorIssue.permalink,
           "fields": [
             {
-              "title": "Total count / last 24h",
-              "value": `${maxErrorIssue.count} / ${maxErrorIssue.lastDayIssuesNum}`,
+              "title": "Event count last 24h (total)",
+              "value": `${maxErrorIssue.lastDayIssuesNum} (${maxErrorIssue.count})`,
               "short": true
             },
             {
               "title": "Assignee",
-              "value": maxErrorIssue.assignedTo,
+              "value": maxErrorIssue.assignedTo && maxErrorIssue.assignedTo.name || "*None!*",
               "short": true
             },
             {
@@ -260,7 +260,7 @@ const handleIssuesResponse = (organization, project, { json, status }) => {
             },
             {
               "title": "First seen",
-              "value": maxErrorIssue.firstSeen,
+              "value": new Date(maxErrorIssue.firstSeen).toDateString().substr(4),
               "short": true
             },
           ]
